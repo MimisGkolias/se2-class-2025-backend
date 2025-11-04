@@ -10,16 +10,30 @@ jobs:
 ci:
   runs-on: ubuntu-latest
   steps: 
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Use Node 22
-      uses: action/setup-node@v4
-      with:
-        node-version: 22
+  - name: Checkout
+    uses: actions/checkout@v4
+  
+  - name: Use Node 22
+    uses: action/setup-node@v4
+    with:
+      node-version: 22
 
-    - name: Install deps
-      run: npm Install
+  - name: Install deps
+    run: npm Install
 
-    - name: Run tests
-      run: npm run tests
+  - name: Run tests
+    run: npm run tests
+
+cd:
+  runs-on: ubuntu-latest
+  needs: ci
+  steps:
+    - name: Deploy Render
+      uses: johnbeynon/render-deploy-action@v0.0.8
+      with: 
+        service_id: ${{ secrets.RENDER_SERVICE_ID }}
+        api-key: ${{ secrets.RENDER_API_KEY }}
+
+        # Αυτα τα βαζεις στο github στα secret keys για τα actions
+        # service-id: ...
+        # api-key: ...
