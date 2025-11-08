@@ -6,20 +6,34 @@ on:
   pull_request:
 
 jobs:
-# CI
-ci:
-  runs-on: ubuntu-latest
-  steps: 
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Use Node 22
-      uses: action/setup-node@v4
-      with:
-        node-version: 22
+  # CI
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install deps
-      run: npm Install
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-    - name: Run tests
-      run: npm run tests
+      - name: Install deps
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  cd:
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+
+# The following are notes on what to add to GitHub secrets for Actions
+# RENDER_SERVICE_ID: ...
+# RENDER_API_KEY: ...
